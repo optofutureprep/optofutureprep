@@ -291,9 +291,6 @@ const ExamModalsManager = () => {
 
     return (
         <>
-            {/* TestDataManager - handles InstantDB operations for test system */}
-            {typeof window.TestDataManager !== 'undefined' && React.createElement(window.TestDataManager)}
-            
             {showExitModal && (
                 <ExitTestModal
                     onReturn={() => setShowExitModal(false)}
