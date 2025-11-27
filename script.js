@@ -5229,27 +5229,144 @@ function endTest() {
     // Show results and save attempt BEFORE clearing state
     showResults();
     
-    // Force immediate display of results to ensure user sees their score
+    // Ensure results are properly displayed in the UI
     setTimeout(() => {
-        console.log('🎯 Forcing results display after test completion');
-        // Show a simple results alert if the main results display fails
-        const test = allTestData[currentSubject][currentTestIndex];
-        if (test) {
-            let correct = 0;
-            test.forEach((q, i) => {
-                if (userAnswers[i] !== undefined && userAnswers[i] === q.a) {
-                    correct++;
-                }
-            });
-            const score = calculateOATScore(correct, test.length, currentSubject);
-            alert(`Test Completed!\n\nScore: ${score}\nCorrect: ${correct}/${test.length}\n\nYour test has been saved and can be reviewed from the subject page.`);
+        console.log('🎯 Ensuring results display after test completion');
+        // Navigate to results view if not already showing
+        const resultsView = document.getElementById('results-view');
+        if (resultsView && resultsView.style.display !== 'block') {
+            showView('results-view');
         }
-    }, 500);
+    }, 100);
 
     // Clear saved test state AFTER saving the attempt
     if (currentSubject && currentTestIndex !== null && currentTestIndex !== undefined) {
         clearTestState(currentSubject, currentTestIndex);
         console.log('🗑️ Test state cleared after submission');
+    }
+}
+
+function populateResultsView() {
+    const results = window.lastTestResults;
+    if (!results) {
+        console.error('No test results available to display');
+        return;
+    }
+
+    console.log('📊 Populating results view with:', results);
+
+    try {
+        // Update title and breadcrumb
+        const testTitle = document.getElementById('result-test-title');
+        const breadcrumb = document.getElementById('result-breadcrumb');
+        if (testTitle) {
+            testTitle.textContent = `${results.subject} Test #${results.testIndex + 1} Results`;
+        }
+        if (breadcrumb) {
+            breadcrumb.textContent = results.subject;
+        }
+
+        // Update date
+        const dateChip = document.getElementById('result-date-chip');
+        const metaDate = document.getElementById('results-meta-date');
+        if (dateChip) {
+            const date = new Date(results.date);
+            dateChip.textContent = date.toLocaleDateString();
+        }
+        if (metaDate) {
+            const date = new Date(results.date);
+            metaDate.textContent = date.toLocaleDateString();
+        }
+
+        // Update question count
+        const questionCount = document.getElementById('result-question-count');
+        if (questionCount) {
+            questionCount.textContent = `${results.total} Questions`;
+        }
+
+        // Update score ring
+        const scoreValue = document.getElementById('result-score-value');
+        const metaScore = document.getElementById('results-meta-score');
+        if (scoreValue) {
+            scoreValue.textContent = results.score;
+        }
+        if (metaScore) {
+            metaScore.textContent = results.score;
+        }
+
+        // Update score ring progress
+        const scoreRing = document.getElementById('result-score-ring');
+        if (scoreRing) {
+            const scoreDeg = ((results.score - 200) / 200) * 360; // 200-400 scale mapped to 0-360 degrees
+            scoreRing.style.setProperty('--score-deg', `${scoreDeg}deg`);
+        }
+
+        // Update raw score
+        const rawScore = document.getElementById('results-raw-score');
+        if (rawScore) {
+            rawScore.textContent = `${results.correct}/${results.total}`;
+        }
+
+        // Update correct/total
+        const correctTotal = document.getElementById('results-correct-total');
+        if (correctTotal) {
+            correctTotal.textContent = `${results.correct}/${results.total}`;
+        }
+
+        // Update meta correct
+        const metaCorrect = document.getElementById('results-meta-correct');
+        if (metaCorrect) {
+            metaCorrect.textContent = `${results.correct}/${results.total}`;
+        }
+
+        // Update time metrics
+        const timePerQuestion = document.getElementById('results-time-per-question');
+        const totalTime = document.getElementById('results-total-time');
+        if (timePerQuestion) {
+            timePerQuestion.textContent = `${results.avgTimePerQuestionSeconds}s`;
+        }
+        if (totalTime) {
+            const minutes = Math.floor(results.totalTimeSeconds / 60);
+            const seconds = results.totalTimeSeconds % 60;
+            totalTime.textContent = `${minutes}m ${seconds}s`;
+        }
+
+        // Update progress bar
+        const progressCorrect = document.getElementById('results-progress-correct');
+        const progressIncorrect = document.getElementById('results-progress-incorrect');
+        const progressText = document.getElementById('results-progress-text');
+        if (progressCorrect && progressIncorrect && progressText) {
+            const correctPercent = (results.correct / results.total) * 100;
+            const incorrectPercent = ((results.total - results.correct) / results.total) * 100;
+            
+            progressCorrect.style.width = `${correctPercent}%`;
+            progressIncorrect.style.width = `${incorrectPercent}%`;
+            progressText.textContent = `${results.correct} of ${results.total} correct`;
+        }
+
+        // Update attempt title
+        const attemptTitle = document.getElementById('results-attempt-title');
+        if (attemptTitle) {
+            attemptTitle.textContent = `${results.subject} Test #${results.testIndex + 1}`;
+        }
+
+        // Update attempt count
+        const attemptChip = document.getElementById('result-attempt-chip');
+        const metaAttempts = document.getElementById('results-meta-attempts');
+        if (attemptChip && metaAttempts) {
+            // Get attempt count from localStorage
+            const historyKey = getTestHistoryKey(results.subject, results.testIndex);
+            const history = loadTestHistory();
+            const attempts = Array.isArray(history[historyKey]) ? history[historyKey] : [];
+            const attemptNumber = attempts.length;
+            
+            attemptChip.textContent = `Attempt ${attemptNumber}`;
+            metaAttempts.textContent = attemptNumber;
+        }
+
+        console.log('✅ Results view populated successfully');
+    } catch (error) {
+        console.error('❌ Error populating results view:', error);
     }
 }
 
@@ -5371,7 +5488,30 @@ function showResults() {
         alert('Error saving test attempt. Please check the console for details.');
     }
 
-    // Return to the subject dashboard (single review surface) instead of showing the legacy results view
+    // Show the results view instead of returning to subject dashboard
+    console.log('📊 Displaying results view');
+    
+    // Store results data for the results view
+    window.lastTestResults = {
+        subject: currentSubject,
+        testIndex: currentTestIndex,
+        score: score,
+        correct: correct,
+        total: test.length,
+        totalTimeSeconds: totalTimeSeconds,
+        avgTimePerQuestionSeconds: avgTimePerQuestion,
+        date: attemptRecord.date,
+        userAnswers: { ...userAnswers },
+        markedQuestions: { ...markedQuestions },
+        highlights: JSON.parse(JSON.stringify(highlights)),
+        passageHighlights: JSON.parse(JSON.stringify(passageHighlights))
+    };
+    
+    // Navigate to results view and populate it with data
+    showView('results-view');
+    populateResultsView();
+    
+    // Also update the subject page so scores appear there when user navigates back
     const subjectToReturnTo = currentSubject;
     if (subjectToReturnTo) {
         try {
@@ -5381,8 +5521,6 @@ function showResults() {
         } catch (e) {
             console.warn('localStorage sync check failed:', e);
         }
-
-        showSubject(subjectToReturnTo, null);
 
         try {
             const testCompletedEvent = new CustomEvent('test-completed', {
