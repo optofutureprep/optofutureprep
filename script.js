@@ -1114,10 +1114,7 @@ function promptAttemptSelection(attempts) {
 }
 
 function reviewTestFromSubject(subjectName, testIndex, attemptNumber) {
-    console.log('🔍 reviewTestFromSubject called:', { subjectName, testIndex, attemptNumber });
     const attempts = getTestAttempts(subjectName, testIndex);
-    console.log('📊 Available attempts:', attempts);
-    
     if (!attempts || attempts.length === 0) {
         alert('Review is available after you complete this test at least once.');
         return;
@@ -1142,21 +1139,15 @@ function reviewTestFromSubject(subjectName, testIndex, attemptNumber) {
         return;
     }
 
+    // Load the saved state for this specific attempt into memory for review
     try {
-        // Apply saved state from the selected attempt
-        console.log('📝 Loading review state from attempt:', targetAttempt);
-        userAnswers = { ...targetAttempt.userAnswers };
-        markedQuestions = { ...targetAttempt.markedQuestions };
-        highlights = JSON.parse(JSON.stringify(targetAttempt.highlights || {}));
-        passageHighlights = JSON.parse(JSON.stringify(targetAttempt.passageHighlights || {}));
+        userAnswers = targetAttempt.userAnswers || {};
+        markedQuestions = targetAttempt.markedQuestions || {};
+        highlights = targetAttempt.highlights || {};
+        passageHighlights = targetAttempt.passageHighlights || {};
         questionTimeSpent = targetAttempt.questionTimeSpent || {};
         questionStartTime = {};
         currentQuestionIndex = 0;
-        console.log('✅ Review state loaded successfully:', {
-            userAnswersCount: Object.keys(userAnswers).length,
-            markedQuestionsCount: Object.keys(markedQuestions).length,
-            highlightsCount: Object.keys(highlights).length
-        });
     } catch (error) {
         console.error('Failed to apply attempt state for review:', error);
         alert('Unable to load saved review data. Please retake the test.');
@@ -5228,16 +5219,6 @@ function endTest() {
 
     // Show results and save attempt BEFORE clearing state
     showResults();
-    
-    // Ensure results are properly displayed in the UI
-    setTimeout(() => {
-        console.log('🎯 Ensuring results display after test completion');
-        // Navigate to results view if not already showing
-        const resultsView = document.getElementById('results-view');
-        if (resultsView && resultsView.style.display !== 'block') {
-            showView('results-view');
-        }
-    }, 100);
 
     // Clear saved test state AFTER saving the attempt
     if (currentSubject && currentTestIndex !== null && currentTestIndex !== undefined) {
@@ -5364,7 +5345,7 @@ function showResults() {
         alert('Error saving test attempt. Please check the console for details.');
     }
 
-    // Return to the subject dashboard to show scores
+    // Return to the subject dashboard (single review surface) instead of showing the legacy results view
     const subjectToReturnTo = currentSubject;
     if (subjectToReturnTo) {
         try {
@@ -5375,7 +5356,6 @@ function showResults() {
             console.warn('localStorage sync check failed:', e);
         }
 
-        // Navigate back to subject page to show scores
         showSubject(subjectToReturnTo, null);
 
         try {
