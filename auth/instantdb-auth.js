@@ -11,28 +11,51 @@
         // Sign in with email and password
         signInWithEmail: async function (email, password) {
             try {
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Use real InstantDB auth
+                if (window.db && window.db.auth) {
+                    const result = await window.db.auth.signInWithEmail(email, password);
+                    if (result.user) {
+                        // Update last login time
+                        try {
+                            await window.db.transact([
+                                window.db.tx.users[result.user.id].update({
+                                    lastLoginAt: new Date().toISOString()
+                                })
+                            ]);
+                        } catch (updateError) {
+                            console.warn('Failed to update last login time:', updateError);
+                        }
+                        
+                        return { user: result.user, error: null };
+                    } else {
+                        return { user: null, error: 'Invalid credentials' };
+                    }
+                } else {
+                    // Fallback to mock if InstantDB not available
+                    console.warn('InstantDB not available, using fallback authentication');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
 
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    throw new Error('Invalid email format');
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        throw new Error('Invalid email format');
+                    }
+
+                    if (password.length < 8) {
+                        throw new Error('Password must be at least 8 characters');
+                    }
+
+                    const user = {
+                        id: 'user_' + Date.now(),
+                        email: email,
+                        displayName: email.split('@')[0],
+                        isAdmin: email === 'optofutureprep@gmail.com',
+                        isBanned: false,
+                        createdAt: new Date().toISOString(),
+                        lastLoginAt: new Date().toISOString()
+                    };
+
+                    return { user, error: null };
                 }
-
-                if (password.length < 8) {
-                    throw new Error('Password must be at least 8 characters');
-                }
-
-                const user = {
-                    id: 'user_' + Date.now(),
-                    email: email,
-                    displayName: email.split('@')[0],
-                    isAdmin: email === 'optofutureprep@gmail.com',
-                    isBanned: false,
-                    createdAt: new Date().toISOString(),
-                    lastLoginAt: new Date().toISOString()
-                };
-
-                return { user, error: null };
             } catch (error) {
                 return { user: null, error: error.message };
             }
@@ -40,28 +63,56 @@
 
         signUpWithEmail: async function (email, password) {
             try {
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Use real InstantDB auth
+                if (window.db && window.db.auth) {
+                    const result = await window.db.auth.signUpWithEmail(email, password);
+                    if (result.user) {
+                        // Create user record in database
+                        try {
+                            await window.db.transact([
+                                window.db.tx.users[result.user.id].update({
+                                    email: email,
+                                    displayName: email.split('@')[0],
+                                    isAdmin: email === 'optofutureprep@gmail.com',
+                                    isBanned: false,
+                                    createdAt: new Date().toISOString(),
+                                    lastLoginAt: new Date().toISOString()
+                                })
+                            ]);
+                        } catch (createError) {
+                            console.warn('Failed to create user record:', createError);
+                        }
+                        
+                        return { user: result.user, error: null };
+                    } else {
+                        return { user: null, error: 'Registration failed' };
+                    }
+                } else {
+                    // Fallback to mock if InstantDB not available
+                    console.warn('InstantDB not available, using fallback authentication');
+                    await new Promise(resolve => setTimeout(resolve, 1500));
 
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    throw new Error('Invalid email format');
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        throw new Error('Invalid email format');
+                    }
+
+                    if (password.length < 8) {
+                        throw new Error('Password must be at least 8 characters');
+                    }
+
+                    const user = {
+                        id: 'user_' + Date.now(),
+                        email: email,
+                        displayName: email.split('@')[0],
+                        isAdmin: email === 'optofutureprep@gmail.com',
+                        isBanned: false,
+                        createdAt: new Date().toISOString(),
+                        lastLoginAt: new Date().toISOString()
+                    };
+
+                    return { user, error: null };
                 }
-
-                if (password.length < 8) {
-                    throw new Error('Password must be at least 8 characters');
-                }
-
-                const user = {
-                    id: 'user_' + Date.now(),
-                    email: email,
-                    displayName: email.split('@')[0],
-                    isAdmin: email === 'optofutureprep@gmail.com',
-                    isBanned: false,
-                    createdAt: new Date().toISOString(),
-                    lastLoginAt: new Date().toISOString()
-                };
-
-                return { user, error: null };
             } catch (error) {
                 return { user: null, error: error.message };
             }
