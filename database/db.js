@@ -11,11 +11,6 @@ export const db = init({
 // Export auth functions
 export const { useAuth, Auth, useQuery } = db;
 
-// Make database available globally for non-module scripts
-if (typeof window !== 'undefined') {
-    window.db = db;
-}
-
 // Helper function to get current user ID
 export function getCurrentUserId() {
     const auth = db.auth.getState();
