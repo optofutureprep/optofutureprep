@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset All Exam Attempts</title>
+    <script src="script.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 15px 0;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.6);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Reset All Exam Attempts</h1>
+        <p>This will clear all test attempts, scores, and progress for <strong>ALL subjects</strong> and <strong>ALL tests</strong>.</p>
+        
+        <div class="warning">
+            <strong>⚠️ Warning:</strong> This action cannot be undone. All saved progress will be permanently deleted.
+        </div>
+        
+        <div class="success" id="success-message">
+            <strong>✅ Success!</strong> All exam attempts have been cleared. The page will reload automatically.
+        </div>
+        
+        <button onclick="performReset()">Reset All Exam Attempts</button>
+        
+        <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.7;">
+            Exam data (questions, settings) will be preserved. Only user progress will be cleared.
+        </p>
+    </div>
+    
+    <script>
+        function performReset() {
+            if (typeof resetAllExams === 'function') {
+                const confirmed = window.confirm('⚠️ FINAL CONFIRMATION:\n\nThis will reset ALL test attempts, scores, and progress for ALL subjects and ALL tests.\n\nThis cannot be undone. Are you absolutely sure?');
+                if (confirmed) {
+                    document.getElementById('success-message').style.display = 'block';
+                    resetAllExams();
+                }
+            } else {
+                alert('Error: resetAllExams function not found. Please make sure script.js is loaded.');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

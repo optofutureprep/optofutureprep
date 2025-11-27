@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test General Chemistry Data</title>
+</head>
+<body>
+    <h1>Testing General Chemistry Data Loading</h1>
+    <div id="output"></div>
+
+    <script src="General Chemistry/exam-data.js"></script>
+    <script>
+        const output = document.getElementById('output');
+        
+        if (typeof window.GeneralChemistryExamData !== 'undefined') {
+            output.innerHTML += '<p style="color: green;">✅ GeneralChemistryExamData is loaded</p>';
+            output.innerHTML += `<p>Number of tests: ${window.GeneralChemistryExamData.length}</p>`;
+            
+            if (window.GeneralChemistryExamData.length > 0) {
+                output.innerHTML += `<p>Test 1 questions: ${window.GeneralChemistryExamData[0].length}</p>`;
+                output.innerHTML += `<p>Test 1 First Question: ${window.GeneralChemistryExamData[0][0].stem.substring(0, 50)}...</p>`;
+            }
+            
+            if (window.GeneralChemistryExamData.length > 1) {
+                output.innerHTML += `<p>Test 2 questions: ${window.GeneralChemistryExamData[1].length}</p>`;
+                output.innerHTML += `<p>Test 2 First Question: ${window.GeneralChemistryExamData[1][0].stem.substring(0, 50)}...</p>`;
+            }
+        } else {
+            output.innerHTML += '<p style="color: red;">❌ GeneralChemistryExamData is NOT loaded</p>';
+        }
+    </script>
+</body>
+</html>
+
+
+
