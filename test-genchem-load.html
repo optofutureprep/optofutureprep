@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test General Chemistry Data Load</title>
+</head>
+<body>
+    <h1>Testing General Chemistry Data Load</h1>
+    <div id="output"></div>
+    
+    <script src="General Chemistry/exam-data.js"></script>
+    <script>
+        const output = document.getElementById('output');
+        
+        setTimeout(() => {
+            if (typeof window.GeneralChemistryExamData !== 'undefined') {
+                output.innerHTML = `
+                    <p style="color: green;">✅ SUCCESS: GeneralChemistryExamData is loaded!</p>
+                    <p>Number of tests: ${window.GeneralChemistryExamData.length}</p>
+                    <p>Test 1 questions: ${window.GeneralChemistryExamData[0] ? window.GeneralChemistryExamData[0].length : 0}</p>
+                    <pre>${JSON.stringify(window.GeneralChemistryExamData[0] ? window.GeneralChemistryExamData[0].slice(0, 2) : [], null, 2)}</pre>
+                `;
+            } else {
+                output.innerHTML = `
+                    <p style="color: red;">❌ ERROR: GeneralChemistryExamData is NOT loaded!</p>
+                    <p>Check browser console for errors.</p>
+                `;
+            }
+        }, 100);
+    </script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,11 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/exam-button-config"
+  to = "/.netlify/functions/exam-button-config"
+  status = 200
+  force = true
