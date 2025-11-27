@@ -82,9 +82,20 @@ const mergeTestDataWithTemplate = (subject, savedData) => {
 	});
 };
 
-// Simplified storage key helper - no user namespacing
+// Helper to get namespaced storage key matching script.js logic
 function getNamespacedKey(base) {
-	return `${base}-default`;
+	let namespace = 'guest';
+	try {
+		if (typeof window !== 'undefined' && window.__instantDBAuthState) {
+			const authState = window.__instantDBAuthState;
+			if (authState.isAuthenticated && authState.userId) {
+				namespace = `user-${authState.userId}`;
+			}
+		}
+	} catch (e) {
+		console.warn('Unable to determine auth namespace in React component, defaulting to guest', e);
+	}
+	return `${base}-${namespace}`;
 }
 
 function loadTestHistory() {
