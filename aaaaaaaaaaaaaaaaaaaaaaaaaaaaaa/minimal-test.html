@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Test</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="dashboard-react-root"></div>
+    
+    <script>
+        console.log('Loading dependencies...');
+        
+        window.addEventListener('load', function() {
+            console.log('Page loaded');
+            console.log('React:', typeof React);
+            console.log('ReactDOM:', typeof ReactDOM);
+            console.log('Babel:', typeof Babel);
+            
+            if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+                console.error('❌ React or ReactDOM not loaded');
+                return;
+            }
+            
+            console.log('✅ Dependencies loaded');
+            
+            // Simple test component
+            const TestApp = () => {
+                return React.createElement('div', {
+                    className: 'p-8 bg-blue-500 text-white'
+                }, 'Minimal Test App - Working!');
+            };
+            
+            try {
+                const rootElement = document.getElementById('dashboard-react-root');
+                if (!rootElement) {
+                    console.error('❌ Root element not found');
+                    return;
+                }
+                
+                const root = ReactDOM.createRoot(rootElement);
+                root.render(React.createElement(TestApp));
+                console.log('✅ React app rendered successfully');
+            } catch (error) {
+                console.error('❌ React render failed:', error);
+                console.error('Stack:', error.stack);
+            }
+        });
+    </script>
+</body>
+</html>
