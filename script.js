@@ -1114,7 +1114,10 @@ function promptAttemptSelection(attempts) {
 }
 
 function reviewTestFromSubject(subjectName, testIndex, attemptNumber) {
+    console.log('🔍 reviewTestFromSubject called:', { subjectName, testIndex, attemptNumber });
     const attempts = getTestAttempts(subjectName, testIndex);
+    console.log('📊 Available attempts:', attempts);
+    
     if (!attempts || attempts.length === 0) {
         alert('Review is available after you complete this test at least once.');
         return;
@@ -1139,15 +1142,21 @@ function reviewTestFromSubject(subjectName, testIndex, attemptNumber) {
         return;
     }
 
-    // Load the saved state for this specific attempt into memory for review
     try {
-        userAnswers = targetAttempt.userAnswers || {};
-        markedQuestions = targetAttempt.markedQuestions || {};
-        highlights = targetAttempt.highlights || {};
-        passageHighlights = targetAttempt.passageHighlights || {};
+        // Apply saved state from the selected attempt
+        console.log('📝 Loading review state from attempt:', targetAttempt);
+        userAnswers = { ...targetAttempt.userAnswers };
+        markedQuestions = { ...targetAttempt.markedQuestions };
+        highlights = JSON.parse(JSON.stringify(targetAttempt.highlights || {}));
+        passageHighlights = JSON.parse(JSON.stringify(targetAttempt.passageHighlights || {}));
         questionTimeSpent = targetAttempt.questionTimeSpent || {};
         questionStartTime = {};
         currentQuestionIndex = 0;
+        console.log('✅ Review state loaded successfully:', {
+            userAnswersCount: Object.keys(userAnswers).length,
+            markedQuestionsCount: Object.keys(markedQuestions).length,
+            highlightsCount: Object.keys(highlights).length
+        });
     } catch (error) {
         console.error('Failed to apply attempt state for review:', error);
         alert('Unable to load saved review data. Please retake the test.');
@@ -5219,6 +5228,23 @@ function endTest() {
 
     // Show results and save attempt BEFORE clearing state
     showResults();
+    
+    // Force immediate display of results to ensure user sees their score
+    setTimeout(() => {
+        console.log('🎯 Forcing results display after test completion');
+        // Show a simple results alert if the main results display fails
+        const test = allTestData[currentSubject][currentTestIndex];
+        if (test) {
+            let correct = 0;
+            test.forEach((q, i) => {
+                if (userAnswers[i] !== undefined && userAnswers[i] === q.a) {
+                    correct++;
+                }
+            });
+            const score = calculateOATScore(correct, test.length, currentSubject);
+            alert(`Test Completed!\n\nScore: ${score}\nCorrect: ${correct}/${test.length}\n\nYour test has been saved and can be reviewed from the subject page.`);
+        }
+    }, 500);
 
     // Clear saved test state AFTER saving the attempt
     if (currentSubject && currentTestIndex !== null && currentTestIndex !== undefined) {
