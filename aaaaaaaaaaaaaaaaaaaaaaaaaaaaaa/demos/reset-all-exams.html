@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset All Exams</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f3f4f6;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        .status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            display: none;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚠️ Reset All Exams</h1>
+        <p>This will clear ALL test attempts, scores, and progress for ALL subjects and ALL tests.</p>
+        <p><strong>This action cannot be undone!</strong></p>
+        <button onclick="resetAll()">Reset All Exams</button>
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        function resetAll() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                // Get all localStorage keys
+                const allKeys = Object.keys(localStorage);
+                
+                // Define all prefixes that indicate test-related data
+                const testDataPrefixes = [
+                    'opto-test-history',
+                    'opto_exam_state_',
+                    'test_',
+                    'completed-test-',
+                    'completed-tests-list',
+                    'highlights-',
+                    'passageHighlights-',
+                    'tagged-'
+                ];
+                
+                let clearedCount = 0;
+                
+                // Clear all keys that match test data prefixes
+                for (const key of allKeys) {
+                    try {
+                        let shouldClear = false;
+                        for (const prefix of testDataPrefixes) {
+                            if (key.startsWith(prefix)) {
+                                shouldClear = true;
+                                break;
+                            }
+                        }
+                        
+                        if (shouldClear) {
+                            localStorage.removeItem(key);
+                            clearedCount++;
+                        }
+                    } catch (e) {
+                        console.warn(`Could not remove key ${key}:`, e);
+                    }
+                }
+                
+                // Set flag for page reload
+                try {
+                    sessionStorage.setItem('reset-in-progress', 'true');
+                } catch (e) {
+                    // Ignore if sessionStorage not available
+                }
+                
+                statusDiv.textContent = `✅ Successfully cleared ${clearedCount} entries! Redirecting to main page...`;
+                statusDiv.className = 'status success';
+                statusDiv.style.display = 'block';
+                
+                // Redirect to main page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                
+            } catch (error) {
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+                statusDiv.className = 'status error';
+                statusDiv.style.display = 'block';
+                console.error('Error during reset:', error);
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test GenChem React Files</title>
+</head>
+<body>
+    <h1>Testing General Chemistry React Files</h1>
+    <div id="output"></div>
+
+    <!-- Load Babel, React, ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        const output = document.getElementById('output');
+        output.innerHTML = '<p>Loading...</p>';
+
+        // Mock ExamEngine Runtime
+        window.ExamRuntime = {
+            resolve: function(name) {
+                if (name === 'ExamEngine') {
+                    return function ExamEngine(props) {
+                        return React.createElement('div', { style: { padding: '20px', border: '2px solid green' } },
+                            React.createElement('h2', {}, props.title),
+                            React.createElement('p', {}, `Subject: ${props.subject}`),
+                            React.createElement('p', {}, `Questions: ${props.questions ? props.questions.length : 0}`),
+                            React.createElement('p', {}, `Duration: ${props.durationMinutes} minutes`)
+                        );
+                    };
+                }
+                return null;
+            }
+        };
+
+        window.examEngineModulesReady = true;
+
+        // Load Test 1
+        fetch('General Chemistry/oat-genchem-test1-react.jsx')
+            .then(response => response.text())
+            .then(jsxCode => {
+                const transformedCode = Babel.transform(jsxCode, { presets: ['react'] }).code;
+                eval(transformedCode);
+                
+                output.innerHTML += '<p style="color: green;">✅ Test 1 loaded successfully</p>';
+                output.innerHTML += `<p>window.OATGenChemTest1 exists: ${typeof window.OATGenChemTest1 !== 'undefined'}</p>`;
+                
+                // Try to render it
+                if (typeof window.OATGenChemTest1 !== 'undefined') {
+                    const container = document.createElement('div');
+                    container.id = 'test1-container';
+                    output.appendChild(container);
+                    
+                    const root = ReactDOM.createRoot(container);
+                    root.render(React.createElement(window.OATGenChemTest1));
+                }
+            })
+            .catch(error => {
+                output.innerHTML += `<p style="color: red;">❌ Error loading Test 1: ${error.message}</p>`;
+                console.error(error);
+            });
+
+        // Load Test 2
+        fetch('General Chemistry/oat-genchem-test2-react.jsx')
+            .then(response => response.text())
+            .then(jsxCode => {
+                const transformedCode = Babel.transform(jsxCode, { presets: ['react'] }).code;
+                eval(transformedCode);
+                
+                output.innerHTML += '<p style="color: green;">✅ Test 2 loaded successfully</p>';
+                output.innerHTML += `<p>window.OATGenChemTest2 exists: ${typeof window.OATGenChemTest2 !== 'undefined'}</p>`;
+                
+                // Try to render it
+                if (typeof window.OATGenChemTest2 !== 'undefined') {
+                    const container = document.createElement('div');
+                    container.id = 'test2-container';
+                    output.appendChild(container);
+                    
+                    const root = ReactDOM.createRoot(container);
+                    root.render(React.createElement(window.OATGenChemTest2));
+                }
+            })
+            .catch(error => {
+                output.innerHTML += `<p style="color: red;">❌ Error loading Test 2: ${error.message}</p>`;
+                console.error(error);
+            });
+    </script>
+</body>
+</html>
+
+
+

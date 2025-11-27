@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page - Optofutureprep</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: #f3f4f6;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-tab {
+            padding: 16px 32px;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: rgba(14, 92, 132, 0.1);
+            color: #0e5c84;
+        }
+
+        .nav-tab.active {
+            background: #0e5c84;
+            color: #ffffff;
+            border-bottom: 3px solid #0b4766;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header - Same style as subjects header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: slide-in 0.4s ease-out;
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-content {
+            background: linear-gradient(180deg, #0a6ea0 0%, #084f75 100%);
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(14, 92, 132, 0.25);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .header-title h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title .icon {
+            font-size: 2.5rem;
+        }
+
+        .header-subtitle {
+            color: #ffffff;
+            font-size: 1.125rem;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* Table Header */
+        thead {
+            background: linear-gradient(180deg, #0a6ea0 0%, #084f75 100%);
+        }
+
+        thead th {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        thead th:last-child {
+            border-right: none;
+        }
+
+        /* Table Body */
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.15s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(14, 92, 132, 0.05);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody td {
+            padding: 18px 20px;
+            font-size: 15px;
+            color: #374151;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.813rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .status-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Action Button */
+        .btn-action {
+            padding: 8px 16px;
+            background: linear-gradient(180deg, #0a6ea0 0%, #084f75 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(14, 92, 132, 0.25);
+        }
+
+        .btn-action:hover {
+            background: linear-gradient(180deg, #084f75 0%, #0b4766 100%);
+            box-shadow: 0 4px 12px rgba(14, 92, 132, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(14, 92, 132, 0.25);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .empty-state p {
+            font-size: 0.938rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-tab {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .header-content {
+                padding: 24px;
+            }
+
+            .header-title h1 {
+                font-size: 2rem;
+            }
+
+            .header-title .icon {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            tbody td, thead th {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab(this, 'home')">Home</button>
+        <button class="nav-tab" onclick="switchTab(this, 'analytics')">Analytics</button>
+        <button class="nav-tab" onclick="switchTab(this, 'settings')">Settings</button>
+        <button class="nav-tab" onclick="switchTab(this, 'about')">About</button>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Page Header - Same style as subjects page -->
+        <header class="page-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>Test Dashboard</h1>
+                    <span class="icon">📊</span>
+                </div>
+                <p class="header-subtitle">Track your progress and manage your tests</p>
+            </div>
+        </header>
+
+        <!-- Table Card -->
+        <div class="table-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Subject</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="test-table-body">
+                        <tr>
+                            <td>Practice Test 1</td>
+                            <td>Biology</td>
+                            <td>85/100</td>
+                            <td>Nov 15, 2025</td>
+                            <td><span class="status-badge status-success">Completed</span></td>
+                            <td><button class="btn-action" onclick="viewTest(1)">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>Practice Test 2</td>
+                            <td>General Chemistry</td>
+                            <td>72/100</td>
+                            <td>Nov 16, 2025</td>
+                            <td><span class="status-badge status-success">Completed</span></td>
+                            <td><button class="btn-action" onclick="viewTest(2)">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>Practice Test 3</td>
+                            <td>Organic Chemistry</td>
+                            <td>--/100</td>
+                            <td>Nov 18, 2025</td>
+                            <td><span class="status-badge status-warning">In Progress</span></td>
+                            <td><button class="btn-action" onclick="continueTest(3)">Continue</button></td>
+                        </tr>
+                        <tr>
+                            <td>Practice Test 4</td>
+                            <td>Physics</td>
+                            <td>91/100</td>
+                            <td>Nov 17, 2025</td>
+                            <td><span class="status-badge status-success">Completed</span></td>
+                            <td><button class="btn-action" onclick="viewTest(4)">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>Practice Test 5</td>
+                            <td>Reading Comprehension</td>
+                            <td>--/100</td>
+                            <td>--</td>
+                            <td><span class="status-badge status-info">Not Started</span></td>
+                            <td><button class="btn-action" onclick="startTest(5)">Start</button></td>
+                        </tr>
+                        <tr>
+                            <td>Practice Test 6</td>
+                            <td>Quantitative Reasoning</td>
+                            <td>78/100</td>
+                            <td>Nov 19, 2025</td>
+                            <td><span class="status-badge status-success">Completed</span></td>
+                            <td><button class="btn-action" onclick="viewTest(6)">View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(element, tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            element.classList.add('active');
+            
+            console.log('Switched to tab:', tabName);
+        }
+
+        // Test action functions
+        function viewTest(testId) {
+            console.log('Viewing test:', testId);
+            alert('Opening test ' + testId + ' results...');
+        }
+
+        function continueTest(testId) {
+            console.log('Continuing test:', testId);
+            alert('Resuming test ' + testId + '...');
+        }
+
+        function startTest(testId) {
+            console.log('Starting test:', testId);
+            alert('Starting test ' + testId + '...');
+        }
+
+        // Server connection test
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test page loaded successfully!');
+            console.log('Current URL:', window.location.href);
+            console.log('Timestamp:', new Date().toLocaleString());
+        });
+    </script>
+</body>
+</html>

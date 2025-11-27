@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug General Chemistry Test Start</title>
+</head>
+<body>
+    <h1>Debug: Starting General Chemistry Test</h1>
+    <div id="output"></div>
+    <button id="startTest1">Start Test 1</button>
+    <button id="startTest2">Start Test 2</button>
+
+    <script src="General Chemistry/exam-data.js"></script>
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(message, color = 'black') {
+            const p = document.createElement('p');
+            p.style.color = color;
+            p.textContent = message;
+            output.appendChild(p);
+        }
+        
+        // Check if data is loaded
+        if (typeof window.GeneralChemistryExamData !== 'undefined') {
+            log('✅ GeneralChemistryExamData loaded', 'green');
+            log(`Tests available: ${window.GeneralChemistryExamData.length}`);
+            log(`Test 1 questions: ${window.GeneralChemistryExamData[0].length}`);
+            log(`Test 2 questions: ${window.GeneralChemistryExamData[1].length}`);
+        } else {
+            log('❌ GeneralChemistryExamData NOT loaded', 'red');
+        }
+        
+        // Simulate what startPreTest does
+        document.getElementById('startTest1').addEventListener('click', function() {
+            log('--- Clicking Start Test 1 ---', 'blue');
+            
+            const subjectName = 'General Chemistry';
+            const testIndex = 0;
+            
+            // This is what getAllTestData() returns
+            const allTestData = {
+                "General Chemistry": window.GeneralChemistryExamData || []
+            };
+            
+            log(`allTestData['General Chemistry'] exists: ${!!allTestData['General Chemistry']}`);
+            log(`allTestData['General Chemistry'] length: ${allTestData['General Chemistry'].length}`);
+            
+            const test = allTestData[subjectName] && allTestData[subjectName][testIndex];
+            log(`test exists: ${!!test}`);
+            log(`test length: ${test ? test.length : 'N/A'}`);
+            
+            if (!test || test.length === 0) {
+                log('❌ ERROR: Test has no questions!', 'red');
+            } else {
+                log(`✅ Test ready with ${test.length} questions`, 'green');
+                log(`First question: ${test[0].stem.substring(0, 60)}...`);
+            }
+        });
+        
+        document.getElementById('startTest2').addEventListener('click', function() {
+            log('--- Clicking Start Test 2 ---', 'blue');
+            
+            const subjectName = 'General Chemistry';
+            const testIndex = 1;
+            
+            const allTestData = {
+                "General Chemistry": window.GeneralChemistryExamData || []
+            };
+            
+            const test = allTestData[subjectName] && allTestData[subjectName][testIndex];
+            log(`test exists: ${!!test}`);
+            log(`test length: ${test ? test.length : 'N/A'}`);
+            
+            if (!test || test.length === 0) {
+                log('❌ ERROR: Test has no questions!', 'red');
+            } else {
+                log(`✅ Test ready with ${test.length} questions`, 'green');
+                log(`First question: ${test[0].stem.substring(0, 60)}...`);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
